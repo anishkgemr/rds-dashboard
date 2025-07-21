@@ -1,0 +1,106 @@
+version: 2.0.0
+views:
+  - name: rds_analysis_dist_view
+    query: |
+        CREATE OR REPLACE VIEW "${database}"."rds_analysis_dist_view" AS 
+        SELECT
+          rds_analysis_data.dbinstanceidentifier
+        , rds_analysis_data.dbinstanceclass
+        , rds_analysis_data.engine
+        , rds_analysis_data.dbinstancestatus
+        , rds_analysis_data.masterusername
+        , rds_analysis_data.endpoint
+        , rds_analysis_data.allocatedstorage
+        , rds_analysis_data.instancecreatetime
+        , rds_analysis_data.preferredbackupwindow
+        , rds_analysis_data.backupretentionperiod
+        , rds_analysis_data.dbsecuritygroups
+        , rds_analysis_data.vpcsecuritygroups
+        , rds_analysis_data.dbparametergroups
+        , rds_analysis_data.availabilityzone
+        , rds_analysis_data.dbsubnetgroup
+        , rds_analysis_data.preferredmaintenancewindow
+        , rds_analysis_data.latestrestorabletime
+        , rds_analysis_data.multiaz
+        , rds_analysis_data.engineversion
+        , rds_analysis_data.autominorversionupgrade
+        , rds_analysis_data.readreplicadbinstanceidentifiers
+        , rds_analysis_data.licensemodel
+        , rds_analysis_data.optiongroupmemberships
+        , rds_analysis_data.publiclyaccessible
+        , rds_analysis_data.storagetype
+        , rds_analysis_data.dbinstanceport
+        , rds_analysis_data.storageencrypted
+        , rds_analysis_data.dbiresourceid
+        , rds_analysis_data.cacertificateidentifier
+        , rds_analysis_data.domainmemberships
+        , rds_analysis_data.copytagstosnapshot
+        , rds_analysis_data.monitoringinterval
+        , rds_analysis_data.dbinstancearn
+        , rds_analysis_data.iamdatabaseauthenticationenabled
+        , rds_analysis_data.performanceinsightsenabled
+        , rds_analysis_data.performanceinsightskmskeyid
+        , rds_analysis_data.performanceinsightsretentionperiod
+        , rds_analysis_data.deletionprotection
+        , rds_analysis_data.associatedroles
+        , rds_analysis_data.maxallocatedstorage
+        , rds_analysis_data.activitystreamstatus
+        , rds_analysis_data.backuptarget
+        , rds_analysis_data.networktype
+        , rds_analysis_data.storagethroughput
+        , rds_analysis_data.certificatedetails
+        , rds_analysis_data.dedicatedlogvolume
+        , rds_analysis_data.accountid
+        , organization_data.name "accountname"
+        , rds_analysis_data.collection_date
+        , rds_analysis_data.region
+        , rds_analysis_data.current_major_version
+        , rds_analysis_data.latest_major_version
+        , rds_analysis_data."latest_major_version_n-1" "latest_major_version_N-1"
+        , rds_analysis_data."latest_major_version_n-2" "latest_major_version_N-2"
+        , rds_analysis_data.current_minor_version
+        , rds_analysis_data.latest_minor_version
+        , rds_analysis_data."latest_minor_version_n-1" "latest_minor_version_N-1"
+        , rds_analysis_data."latest_minor_version_n-2" "latest_minor_version_N-2"
+        , rds_analysis_data.dbname
+        , rds_analysis_data.kmskeyid
+        , rds_analysis_data.enginelifecyclesupport
+        , rds_analysis_data.dbclusteridentifier
+        , rds_analysis_data.engine_version_status
+        , rds_analysis_data.readreplicasourcedbinstanceidentifier
+        , array_join(transform(rds_analysis_data.taglist, (x) -> concat(x.Key, ':', x.Value)), ', ') taglist
+        , rds_maintenance_data.action
+        , rds_maintenance_data.description
+        , rds_maintenance_data.currentapplydate
+        , rds_maintenance_data.autoappliedafterdate
+        , rds_maintenance_data.forcedapplydate
+        , rds_maintenance_data.optinstatus
+        , rds_analysis_data.payer_id
+        , rds_analysis_data.year
+        , rds_analysis_data.month
+        , rds_analysis_data.day
+        FROM
+          ((rds_analysis_data
+        LEFT JOIN organization_data ON (rds_analysis_data.accountid = organization_data.id))
+        LEFT JOIN rds_maintenance_data ON ((rds_maintenance_data.resourceidentifier = rds_analysis_data.dbinstancearn) 
+        AND (rds_maintenance_data.accountid = rds_analysis_data.accountid) 
+        AND (date(CAST(rds_maintenance_data.collection_date AS timestamp)) = date(CAST(rds_analysis_data.collection_date AS timestamp))) 
+        AND (rds_maintenance_data.region = rds_analysis_data.region) 
+        AND (rds_maintenance_data.payer_id = rds_analysis_data.payer_id)))
+
+datasets:
+  rds_analysis_dist_view:
+    table: rds_analysis_dist_view
+    schema: ${database}
+    catalog: ${glue_data_catalog}
+
+dashboards:
+  CID:
+    dependsOn:
+      datasets:
+        - rds_analysis_dist_view
+    name: RDS Analysis
+    dashboardId: rds-analysis-views
+    category: Custom
+    theme: MIDNIGHT
+    version: 1.0.0
