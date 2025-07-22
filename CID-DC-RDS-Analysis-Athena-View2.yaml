@@ -1,6 +1,9 @@
 version: 2.0.0
+account_map:           # Add this section
+  enabled: false      # Disable account map since you're not using it
+
 views:
-  - name: rds_analysis_dist_view
+  rds_analysis_dist_view:    # Change from array to dictionary format
     query: |
         CREATE OR REPLACE VIEW "${database}"."rds_analysis_dist_view" AS 
         SELECT
@@ -95,12 +98,10 @@ datasets:
     catalog: ${glue_data_catalog}
 
 dashboards:
-  CID:
-    dependsOn:
-      datasets:
-        - rds_analysis_dist_view
+  rds-analysis-views:        # Use dashboard ID as key
     name: RDS Analysis
-    dashboardId: rds-analysis-views
+    dependsOn:
+      - rds_analysis_dist_view
     category: Custom
     theme: MIDNIGHT
     version: 1.0.0
