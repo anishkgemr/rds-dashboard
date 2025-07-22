@@ -1,10 +1,7 @@
-version: 2.0.0
-account_map: false
-
 views:
   rds_analysis_dist_view:    # Change from array to dictionary format
     query: |
-        CREATE OR REPLACE VIEW "${database}"."rds_analysis_dist_view" AS 
+        CREATE OR REPLACE VIEW "${data_collection_database_name}"."rds_analysis_dist_view" AS 
         SELECT
           rds_analysis_data.dbinstanceidentifier
         , rds_analysis_data.dbinstanceclass
@@ -93,21 +90,14 @@ views:
 datasets:
   rds_analysis_dist_view:
     table: rds_analysis_dist_view
-    schema: ${database}
+    schema: ${data_collection_database_name}
     catalog: ${glue_data_catalog}
 
 dashboard:
   name: "RDS Analysis"
   id: "rds-analysis-views"
-  dependsOn:
-    datasets:
-      - rds_analysis_dist_view
+  datasets:
+    - rds_analysis_dist_view
   category: "Custom"
   theme: "MIDNIGHT"
   version: "1.0.0"
-  permissions:
-    - principal: "*"
-      actions:
-        - "quicksight:DescribeDashboard"
-        - "quicksight:ListDashboardVersions"
-        - "quicksight:UpdateDashboardPermissions"
