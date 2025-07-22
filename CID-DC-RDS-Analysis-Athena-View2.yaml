@@ -1,6 +1,5 @@
 version: 2.0.0
-account_map:           # Add this section
-  enabled: false      # Disable account map since you're not using it
+account_map: false
 
 views:
   rds_analysis_dist_view:    # Change from array to dictionary format
@@ -97,11 +96,18 @@ datasets:
     schema: ${database}
     catalog: ${glue_data_catalog}
 
-dashboards:
-  rds-analysis-views:        # Use dashboard ID as key
-    name: RDS Analysis
-    dependsOn:
+dashboard:
+  name: "RDS Analysis"
+  id: "rds-analysis-views"
+  dependsOn:
+    datasets:
       - rds_analysis_dist_view
-    category: Custom
-    theme: MIDNIGHT
-    version: 1.0.0
+  category: "Custom"
+  theme: "MIDNIGHT"
+  version: "1.0.0"
+  permissions:
+    - principal: "*"
+      actions:
+        - "quicksight:DescribeDashboard"
+        - "quicksight:ListDashboardVersions"
+        - "quicksight:UpdateDashboardPermissions"
