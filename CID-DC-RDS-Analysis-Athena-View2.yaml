@@ -89,15 +89,190 @@ views:
 
 datasets:
   rds_analysis_dist_view:
-    table: rds_analysis_dist_view
-    schema: ${data_collection_database_name}
-    catalog: ${glue_data_catalog}
+    data:
+      DataSetId: "rds-analysis-dataset-001"
+      Name: rds_analysis_dist_view
+      PhysicalTableMap:
+        "rds-analysis-table-001":
+          RelationalTable:
+            DataSourceArn: ${athena_datasource_arn}
+            Catalog: ${glue_data_catalog}
+            Schema: ${data_collection_database_name}
+            Name: rds_analysis_dist_view
+            InputColumns:
+              - Name: dbinstanceidentifier
+                Type: STRING
+              - Name: dbinstanceclass
+                Type: STRING
+              - Name: engine
+                Type: STRING
+              - Name: dbinstancestatus
+                Type: STRING
+              - Name: masterusername
+                Type: STRING
+              - Name: endpoint
+                Type: STRING
+              - Name: allocatedstorage
+                Type: INTEGER
+              - Name: instancecreatetime
+                Type: DATETIME
+              - Name: preferredbackupwindow
+                Type: STRING
+              - Name: backupretentionperiod
+                Type: INTEGER
+              - Name: dbsecuritygroups
+                Type: STRING
+              - Name: vpcsecuritygroups
+                Type: STRING
+              - Name: dbparametergroups
+                Type: STRING
+              - Name: availabilityzone
+                Type: STRING
+              - Name: dbsubnetgroup
+                Type: STRING
+              - Name: preferredmaintenancewindow
+                Type: STRING
+              - Name: latestrestorabletime
+                Type: DATETIME
+              - Name: multiaz
+                Type: BOOLEAN
+              - Name: engineversion
+                Type: STRING
+              - Name: autominorversionupgrade
+                Type: BOOLEAN
+              - Name: readreplicadbinstanceidentifiers
+                Type: STRING
+              - Name: licensemodel
+                Type: STRING
+              - Name: optiongroupmemberships
+                Type: STRING
+              - Name: publiclyaccessible
+                Type: BOOLEAN
+              - Name: storagetype
+                Type: STRING
+              - Name: dbinstanceport
+                Type: INTEGER
+              - Name: storageencrypted
+                Type: BOOLEAN
+              - Name: dbiresourceid
+                Type: STRING
+              - Name: cacertificateidentifier
+                Type: STRING
+              - Name: domainmemberships
+                Type: STRING
+              - Name: copytagstosnapshot
+                Type: BOOLEAN
+              - Name: monitoringinterval
+                Type: INTEGER
+              - Name: dbinstancearn
+                Type: STRING
+              - Name: iamdatabaseauthenticationenabled
+                Type: BOOLEAN
+              - Name: performanceinsightsenabled
+                Type: BOOLEAN
+              - Name: performanceinsightskmskeyid
+                Type: STRING
+              - Name: performanceinsightsretentionperiod
+                Type: INTEGER
+              - Name: deletionprotection
+                Type: BOOLEAN
+              - Name: associatedroles
+                Type: STRING
+              - Name: maxallocatedstorage
+                Type: INTEGER
+              - Name: activitystreamstatus
+                Type: STRING
+              - Name: backuptarget
+                Type: STRING
+              - Name: networktype
+                Type: STRING
+              - Name: storagethroughput
+                Type: INTEGER
+              - Name: certificatedetails
+                Type: STRING
+              - Name: dedicatedlogvolume
+                Type: STRING
+              - Name: accountid
+                Type: STRING
+              - Name: accountname
+                Type: STRING
+              - Name: collection_date
+                Type: DATETIME
+              - Name: region
+                Type: STRING
+              - Name: current_major_version
+                Type: STRING
+              - Name: latest_major_version
+                Type: STRING
+              - Name: latest_major_version_N-1
+                Type: STRING
+              - Name: latest_major_version_N-2
+                Type: STRING
+              - Name: current_minor_version
+                Type: STRING
+              - Name: latest_minor_version
+                Type: STRING
+              - Name: latest_minor_version_N-1
+                Type: STRING
+              - Name: latest_minor_version_N-2
+                Type: STRING
+              - Name: dbname
+                Type: STRING
+              - Name: kmskeyid
+                Type: STRING
+              - Name: enginelifecyclesupport
+                Type: STRING
+              - Name: dbclusteridentifier
+                Type: STRING
+              - Name: engine_version_status
+                Type: STRING
+              - Name: readreplicasourcedbinstanceidentifier
+                Type: STRING
+              - Name: taglist
+                Type: STRING
+              - Name: action
+                Type: STRING
+              - Name: description
+                Type: STRING
+              - Name: currentapplydate
+                Type: DATETIME
+              - Name: autoappliedafterdate
+                Type: DATETIME
+              - Name: forcedapplydate
+                Type: DATETIME
+              - Name: optinstatus
+                Type: STRING
+              - Name: payer_id
+                Type: STRING
+              - Name: year
+                Type: INTEGER
+              - Name: month
+                Type: INTEGER
+              - Name: day
+                Type: INTEGER
+      LogicalTableMap:
+        "rds-analysis-logical-001":
+          Alias: rds_analysis_dist_view
+          Source:
+            PhysicalTableId: "rds-analysis-table-001"
+      ImportMode: SPICE
+    dependsOn:
+      views:
+        - rds_analysis_dist_view
+    schedules:
+      - default
 
 dashboard:
   name: "RDS Analysis"
   id: "rds-analysis-views"
-  datasets:
-    - rds_analysis_dist_view
+  dependsOn:
+    datasets:
+      - rds_analysis_dist_view
   category: "Custom"
   theme: "MIDNIGHT"
   version: "1.0.0"
+  permissions:
+    - principal: "*"
+      actions:
+        - "quicksight:DescribeDashboard"
+        - "quicksight:ListDashboardVersions"
