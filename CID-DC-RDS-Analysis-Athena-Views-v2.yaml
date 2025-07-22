@@ -1,0 +1,28 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'RDS Analysis Views'
+
+Parameters:
+  DatabaseName:
+    Type: String
+    Description: 'Athena Database Name'
+    Default: 'optimization_data'
+
+Resources:
+  Dashboard:
+    Type: Custom::CidDashboard
+    Properties:
+      Name: 'rds-analysis-views'
+      ServiceToken: {'Fn::ImportValue': "cid-CidExecArn"}
+      Dashboard:
+        dashboard-id: 'rds-analysis-views'
+        account-map-source: 'dummy'
+        data-collection-database-name: !Ref DatabaseName
+        resources: 'https://raw.githubusercontent.com/anishkgemr/rds-dashboard/main/CID-DC-RDS-Analysis-Athena-View2.yaml'
+        athena-database: !Ref DatabaseName
+        athena-workgroup: 'primary'
+        glue-data-catalog: 'AwsDataCatalog'
+
+Outputs:
+  DashboardURL:
+    Description: "URL of Dashboard"
+    Value: !GetAtt Dashboard.DashboardURL
