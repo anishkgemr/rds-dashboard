@@ -71,20 +71,16 @@ The RDS module collects pending maintenance actions across your accounts. Until 
 ```bash
 REGION="us-east-1"
 ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-BUCKET="cid-data-${ACCOUNT_ID}"
-
-# Upload template
-aws s3 cp data-collection/module-rds.yaml \
-  s3://${BUCKET}/rds-dashboard/data-collection/module-rds.yaml
 
 # Deploy data collection module
 aws cloudformation create-stack \
   --stack-name rds-data-collection \
-  --template-url https://s3.amazonaws.com/${BUCKET}/rds-dashboard/data-collection/module-rds.yaml \
-  --capabilities CAPABILITY_NAMED_IAM \
+  --template-body file://module-rds.yaml \
+  --capabilities CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND \
   --parameters \
     ParameterKey=GlueRoleARN,ParameterValue=arn:aws:iam::${ACCOUNT_ID}:role/CID-DC-Glue-Crawler \
     ParameterKey=DestinationBucket,ParameterValue=cid-data-${ACCOUNT_ID} \
+    ParameterKey=DestinationBucketARN,ParameterValue=arn:aws:s3:::cid-data-${ACCOUNT_ID} \
     ParameterKey=DatabaseName,ParameterValue=optimization_data \
     ParameterKey=MultiAccountRoleName,ParameterValue=CID-DC-Optimization-Data-Multi-Account-Role \
     ParameterKey=StepFunctionExecutionRoleARN,ParameterValue=arn:aws:iam::${ACCOUNT_ID}:role/CID-DC-StepFunctionExecutionRole \
