@@ -64,6 +64,36 @@ The dashboard is organized into 5 tabs:
 
 > ⚠️ **Important:** Before proceeding, ensure you have completed the [CID Data Collection Stack](https://docs.aws.amazon.com/guidance/latest/cloud-intelligence-dashboards/data-collection.html) and [CID Foundational Dashboards](https://docs.aws.amazon.com/guidance/latest/cloud-intelligence-dashboards/deployment-in-global-regions.html) deployment. These are required prerequisites.
 
+### Data Collection Setup
+
+The RDS module collects pending maintenance actions across your accounts. Until this module is merged into the official CID framework, deploy it separately:
+
+```bash
+REGION="us-east-1"
+ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+BUCKET="cid-data-${ACCOUNT_ID}"
+
+# Upload template
+aws s3 cp data-collection/module-rds.yaml \
+  s3://${BUCKET}/rds-dashboard/data-collection/module-rds.yaml
+
+# Deploy data collection module
+aws cloudformation create-stack \
+  --stack-name rds-data-collection \
+  --template-url https://s3.amazonaws.com/${BUCKET}/rds-dashboard/data-collection/module-rds.yaml \
+  --capabilities CAPABILITY_NAMED_IAM \
+  --parameters \
+    ParameterKey=GlueRoleARN,ParameterValue=arn:aws:iam::${ACCOUNT_ID}:role/CID-DC-Glue-Crawler \
+    ParameterKey=DestinationBucket,ParameterValue=cid-data-${ACCOUNT_ID} \
+    ParameterKey=DatabaseName,ParameterValue=optimization_data \
+    ParameterKey=MultiAccountRoleName,ParameterValue=CID-DC-Optimization-Data-Multi-Account-Role \
+    ParameterKey=StepFunctionExecutionRoleARN,ParameterValue=arn:aws:iam::${ACCOUNT_ID}:role/CID-DC-StepFunctionExecutionRole \
+    ParameterKey=SchedulerExecutionRoleARN,ParameterValue=arn:aws:iam::${ACCOUNT_ID}:role/CID-DC-SchedulerExecutionRole \
+  --region ${REGION}
+```
+
+> **Note:** Once the RDS module is merged into the CID Data Collection framework, this separate deployment will no longer be needed. Simply enable `IncludeRDSModule: yes` in the CID Data Collection stack instead.
+
 ### Dashboard Deployment
 
 #### CloudFormation
