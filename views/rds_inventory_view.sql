@@ -134,6 +134,7 @@ SELECT
 , i.cacertificateidentifier
 , i.dbinstancearn
 , i.performanceinsightsenabled
+, i.databaseinsightsmode
 , i.deletionprotection
 , i.certificatedetails
 , i.accountid
