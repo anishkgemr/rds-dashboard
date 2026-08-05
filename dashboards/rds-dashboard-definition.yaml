@@ -278,7 +278,7 @@ CalculatedFields:
   Expression: ifelse({Selected Minor Version Status}='True',1,0)
   Name: latest_minor_version_percent
 - DataSetIdentifier: rds_inventory_dataset
-  Expression: ifelse(multiaz=0,1,0)
+  Expression: ifelse(multiaz=1,1,0)
   Name: multiaz_enabled_status
 - DataSetIdentifier: rds_inventory_dataset
   Expression: |-
@@ -308,7 +308,7 @@ CalculatedFields:
   Expression: ifelse(storageencrypted=1,1,0)
   Name: storage_encrypted_status
 - DataSetIdentifier: rds_inventory_dataset
-  Expression: ifelse(storageencrypted=0,0,1)
+  Expression: ifelse(storageencrypted=0,1,0)
   Name: storage_unencrypted_status
 - DataSetIdentifier: rds_inventory_dataset
   Expression: ifelse(maxallocatedstorage <> 0,'True','False')
@@ -6105,6 +6105,7 @@ Sheets:
               </block>
               <br/>
               <block align="center">
+                <inline font-size="15px">(</inline>
                 <inline font-size="15px">
                   <parameter>${pCollectionDate}</parameter>
                 </inline>
