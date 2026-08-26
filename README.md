@@ -51,7 +51,6 @@ The dashboard is organized into 5 tabs:
 1. Deploy the [CID Data Collection Stack](https://docs.aws.amazon.com/guidance/latest/cloud-intelligence-dashboards/data-collection.html) with the following modules enabled:
    - **Inventory module** (`IncludeInventoryCollectorModule: yes`) — collects RDS instances, clusters, and snapshots
    - **Reference module** (`IncludeReferenceModule: yes`) — provides engine version and end-of-support data
-   - **RDS module** (`IncludeRDSModule: yes`) — collects pending maintenance actions
    - **Organization module** (`IncludeOrgDataModule: yes`) — provides account names
 
    Version 3.0.8 or higher required.
