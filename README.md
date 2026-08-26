@@ -85,8 +85,11 @@ aws cloudformation create-stack \
     ParameterKey=MultiAccountRoleName,ParameterValue=CID-DC-Optimization-Data-Multi-Account-Role \
     ParameterKey=StepFunctionExecutionRoleARN,ParameterValue=arn:aws:iam::${ACCOUNT_ID}:role/CID-DC-StepFunctionExecutionRole \
     ParameterKey=SchedulerExecutionRoleARN,ParameterValue=arn:aws:iam::${ACCOUNT_ID}:role/CID-DC-SchedulerExecutionRole \
+    ParameterKey=LambdaAnalyticsARN,ParameterValue=arn:aws:lambda:${REGION}:${ACCOUNT_ID}:function:CID-DC-analytics-Lambda \
   --region ${REGION}
 ```
+
+> **Note:** `LambdaAnalyticsARN` points to the CID deployment-analytics Lambda (created by the CID Data Collection stack) and is required by the module's `AnalyticsExecutor` telemetry resource. All parameters above reference resources created by the CID Data Collection stack, so that stack must be deployed first.
 
 > **Note:** Once the RDS module is merged into the CID Data Collection framework, this separate deployment will no longer be needed. Simply enable `IncludeRDSModule: yes` in the CID Data Collection stack instead.
 
